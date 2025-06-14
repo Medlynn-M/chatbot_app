@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 from dotenv import load_dotenv
-from langchain.llms import OpenAI
+from langchain_openai import OpenAI
 from langchain.document_loaders import PyPDFLoader
 from langchain.chains.question_answering import load_qa_chain
 
