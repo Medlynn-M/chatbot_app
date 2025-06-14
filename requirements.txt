@@ -1,5 +1,5 @@
 streamlit
-transformers
 PyMuPDF
-torch
+google-generativeai
+
 
