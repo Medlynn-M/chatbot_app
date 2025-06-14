@@ -1,8 +1,14 @@
 import streamlit as st
-from transformers import pipeline
 import fitz  # PyMuPDF
+import google.generativeai as genai
+import os
 
-# ----------- PDF LOADER -------------
+# ---------------------- CONFIGURE GEMINI ----------------------
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+
+model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
+
+# ---------------------- LOAD PDF TEXT ----------------------
 def load_pdf_text(pdf_path):
     text = ""
     try:
@@ -14,25 +20,14 @@ def load_pdf_text(pdf_path):
         st.error(f"❌ Failed to load PDF: {e}")
         return None
 
-# ----------- QA MODEL -------------
-def load_qa_pipeline():
-    return pipeline(
-        "question-answering",
-        model="distilbert-base-cased-distilled-squad",
-        tokenizer="distilbert-base-cased-distilled-squad"
-    )
-
-# Load PDF text
 pdf_text = load_pdf_text("my_report.pdf")
-qa = load_qa_pipeline()
 
-# ----------- UI SETUP -------------
+# ---------------------- UI SETUP ----------------------
 st.set_page_config(layout="wide")
 st.title("📊 AI-Driven Stockout Risk Optimization Chatbot")
 
 col1, col2 = st.columns(2)
 
-# LEFT: Tableau Dashboard Embed
 with col1:
     st.subheader("📈 Interactive Tableau Dashboard")
     st.markdown("""
@@ -40,21 +35,20 @@ with col1:
         width="100%" height="600" style="border:none;"></iframe>
     """, unsafe_allow_html=True)
 
-# RIGHT: Chatbot Interface
 with col2:
     st.subheader("💬 Ask Questions from the PDF Report")
     if pdf_text:
-        question = st.text_input("Ask your question:")
-        if question:
+        user_question = st.text_input("Ask your question:")
+        if user_question:
             try:
-                result = qa(question=question, context=pdf_text)
-                st.success(result['answer'])
+                response = model.generate_content(f"Answer based on this report:\n{pdf_text}\n\nQuestion: {user_question}")
+                st.success(response.text)
             except Exception as e:
-                st.error(f"⚠️ Model error: {e}")
+                st.error(f"⚠️ Gemini Error: {e}")
     else:
-        st.warning("PDF could not be loaded.")
+        st.warning("⚠️ PDF not loaded.")
 
-# ----------- SIDEBAR RESOURCES -------------
+# ---------------------- SIDEBAR ----------------------
 st.sidebar.title("📂 Project Resources")
 
 try:
