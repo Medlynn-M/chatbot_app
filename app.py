@@ -44,7 +44,7 @@ width="100%" height="600" style="border:none;"></iframe>
 
 # RIGHT: Chatbot Q&A
 with col2:
-    st.subheader("💬 Ask Questions from the PDF Report")
+    st.subheader("💬 Ask Questions")
     question = st.text_input("Ask your question:")
     if question:
         try:
@@ -63,14 +63,14 @@ except:
     st.sidebar.warning("⚠️ PDF not found")
 
 try:
-    with open("my_data.xlsx", "rb") as f:
-        st.sidebar.download_button("📊 Download Dataset", f, file_name="my_data.xlsx")
+    with open("my_data.CSV", "rb") as f:
+        st.sidebar.download_button("📊 Download Dataset", f, file_name="my_data.CSV")
 except:
     st.sidebar.warning("⚠️ Dataset not found")
 
 try:
-    with open("your_code.py", "rb") as f:
-        st.sidebar.download_button("🐍 Download Code", f, file_name="your_code.py")
+    with open("MY_code.IpyNB", "rb") as f:
+        st.sidebar.download_button("🐍 Download Code", f, file_name="MY_code.IpyNB")
 except:
     st.sidebar.warning("⚠️ Code file not found")
 
