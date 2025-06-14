@@ -64,7 +64,7 @@ except:
 
 try:
     with open("my_data.csv", "rb") as f:
-        st.sidebar.download_button("📊 Download Dataset", f, file_name="my_data.csv")
+        st.sidebar.download_button("🧾 Download Dataset", f, file_name="my_data.csv")
 except:
     st.sidebar.warning("⚠️ Dataset not found")
 
