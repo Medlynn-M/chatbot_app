@@ -63,14 +63,14 @@ except:
     st.sidebar.warning("⚠️ PDF not found")
 
 try:
-    with open("my_data.CSV", "rb") as f:
-        st.sidebar.download_button("📊 Download Dataset", f, file_name="my_data.CSV")
+    with open("my_data.csv", "rb") as f:
+        st.sidebar.download_button("📊 Download Dataset", f, file_name="my_data.csv")
 except:
     st.sidebar.warning("⚠️ Dataset not found")
 
 try:
     with open("MY_code.IpyNB", "rb") as f:
-        st.sidebar.download_button("🐍 Download Code", f, file_name="MY_code.IpyNB")
+        st.sidebar.download_button("🐍 Download Code", f, file_name="my_code.ipynb")
 except:
     st.sidebar.warning("⚠️ Code file not found")
 
