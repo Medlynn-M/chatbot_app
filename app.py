@@ -69,7 +69,7 @@ except:
     st.sidebar.warning("⚠️ Dataset not found")
 
 try:
-    with open("MY_code.IpyNB", "rb") as f:
+    with open("my_code.ipynb", "rb") as f:
         st.sidebar.download_button("🐍 Download Code", f, file_name="my_code.ipynb")
 except:
     st.sidebar.warning("⚠️ Code file not found")
