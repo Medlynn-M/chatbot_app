@@ -1,8 +1,8 @@
 import streamlit as st
-import fitz  # PyMuPDF
 from transformers import pipeline
+import fitz  # PyMuPDF
 
-# Load the PDF content
+# ----------- PDF LOADER -------------
 def load_pdf_text(pdf_path):
     text = ""
     try:
@@ -14,49 +14,47 @@ def load_pdf_text(pdf_path):
         st.error(f"❌ Failed to load PDF: {e}")
         return None
 
-# Load the PDF
-pdf_text = load_pdf_text("my_report.pdf")
-
-# Initialize Hugging Face QA pipeline (no API key required)
-@st.cache_resource
+# ----------- QA MODEL -------------
 def load_qa_pipeline():
     return pipeline(
         "question-answering",
-        model="deepset/roberta-base-squad2",
-        tokenizer="deepset/roberta-base-squad2"
+        model="distilbert-base-cased-distilled-squad",
+        tokenizer="distilbert-base-cased-distilled-squad"
     )
 
-qa_pipeline = load_qa_pipeline()
+# Load PDF text
+pdf_text = load_pdf_text("my_report.pdf")
+qa = load_qa_pipeline()
 
-# Streamlit layout
+# ----------- UI SETUP -------------
 st.set_page_config(layout="wide")
 st.title("📊 AI-Driven Stockout Risk Optimization Chatbot")
 
 col1, col2 = st.columns(2)
 
-# LEFT: Tableau Embed
+# LEFT: Tableau Dashboard Embed
 with col1:
     st.subheader("📈 Interactive Tableau Dashboard")
     st.markdown("""
-    <iframe src="https://public.tableau.com/views/AI-DrivenStockoutRiskPredictionforSmarterInventoryManagement/AI-drivenstockoutriskoptimizationforsmarterinventorymanagement?:language=en-US&:display_count=n&:origin=viz_share_link"
-    width="100%" height="600" style="border:none;"></iframe>
+        <iframe src="https://public.tableau.com/views/AI-DrivenStockoutRiskPredictionforSmarterInventoryManagement/AI-drivenstockoutriskoptimizationforsmarterinventorymanagement?:language=en-US&:display_count=n&:origin=viz_share_link"
+        width="100%" height="600" style="border:none;"></iframe>
     """, unsafe_allow_html=True)
 
-# RIGHT: PDF-based chatbot
+# RIGHT: Chatbot Interface
 with col2:
     st.subheader("💬 Ask Questions from the PDF Report")
     if pdf_text:
-        user_question = st.text_input("Ask your question:")
-        if user_question:
+        question = st.text_input("Ask your question:")
+        if question:
             try:
-                response = qa_pipeline(question=user_question, context=pdf_text)
-                st.success(response["answer"])
+                result = qa(question=question, context=pdf_text)
+                st.success(result['answer'])
             except Exception as e:
                 st.error(f"⚠️ Model error: {e}")
     else:
-        st.error("PDF not loaded. Cannot answer questions.")
+        st.warning("PDF could not be loaded.")
 
-# SIDEBAR: Downloads
+# ----------- SIDEBAR RESOURCES -------------
 st.sidebar.title("📂 Project Resources")
 
 try:
@@ -75,6 +73,6 @@ try:
     with open("my_code.ipynb", "rb") as f:
         st.sidebar.download_button("🐍 Download Code", f, file_name="my_code.ipynb")
 except:
-    st.sidebar.warning("⚠️ Code not found")
+    st.sidebar.warning("⚠️ Code file not found")
 
 st.sidebar.markdown("🔗 [📦 View Dataset on Kaggle](https://www.kaggle.com/datasets/anirudhchauhan/retail-store-inventory-forecasting-dataset/data)")
