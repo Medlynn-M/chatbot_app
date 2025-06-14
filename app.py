@@ -1,40 +1,37 @@
 import streamlit as st
-import os
-from dotenv import load_dotenv
-from langchain_openai import OpenAI
-from langchain_community.document_loaders import PyPDFLoader
-from langchain.chains.question_answering import load_qa_chain
+from transformers import pipeline
+import fitz  # PyMuPDF for reading PDFs
 
-# Load API key: from .env locally or st.secrets on Streamlit Cloud
-load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
+# Load Hugging Face token from secrets (for deployment)
+hf_token = st.secrets["HUGGINGFACE_TOKEN"]
 
-if not api_key and "OPENAI_API_KEY" in st.secrets:
-    api_key = st.secrets["OPENAI_API_KEY"]
+# Hugging Face Q&A pipeline (DistilBERT)
+qa = pipeline("question-answering",
+              model="distilbert-base-cased-distilled-squad",
+              tokenizer="distilbert-base-cased-distilled-squad",
+              use_auth_token=hf_token)
 
-if not api_key:
-    st.error("❌ OPENAI_API_KEY not found. Please check your .env file (for local) or Streamlit Secrets (for deployment).")
-    st.stop()
+# Load and extract text from PDF
+def extract_text_from_pdf(pdf_path):
+    text = ""
+    try:
+        doc = fitz.open(pdf_path)
+        for page in doc:
+            text += page.get_text()
+    except Exception as e:
+        st.error(f"❌ Error loading PDF: {e}")
+    return text
 
-# Load your report PDF
-try:
-    loader = PyPDFLoader("my_report.pdf")
-    documents = loader.load()
-except Exception as e:
-    st.error(f"❌ Failed to load PDF: {e}")
-    st.stop()
+# Extract context
+pdf_text = extract_text_from_pdf("my_report.pdf")
 
-# Initialize OpenAI and LangChain
-llm = OpenAI(temperature=0.2, openai_api_key=api_key)
-chain = load_qa_chain(llm, chain_type="stuff")
-
-# Streamlit Layout
+# UI layout
 st.set_page_config(layout="wide")
-st.title("📊 AI-Driven Stockout Risk Optimization Chatbot")
+st.title("📊 AI Chatbot + Tableau Dashboard (Free Hugging Face Version)")
 
 col1, col2 = st.columns(2)
 
-# LEFT: Tableau Dashboard Embed
+# LEFT: Dashboard
 with col1:
     st.subheader("📈 Interactive Tableau Dashboard")
     st.markdown("""
@@ -42,36 +39,36 @@ with col1:
 width="100%" height="600" style="border:none;"></iframe>
 """, unsafe_allow_html=True)
 
-# RIGHT: Chatbot Q&A
+# RIGHT: Chatbot
 with col2:
-    st.subheader("💬 Ask Questions")
-    question = st.text_input("Ask your question:")
-    if question:
+    st.subheader("🤖 Ask About the Project")
+    user_question = st.text_input("Ask your question here:")
+    if user_question:
         try:
-            answer = chain.run(input_documents=documents, question=question)
-            st.success(answer)
+            result = qa(question=user_question, context=pdf_text)
+            st.success(result["answer"])
         except Exception as e:
-            st.error(f"⚠️ Error: {e}")
+            st.error(f"⚠️ Hugging Face error: {e}")
 
-# SIDEBAR: Resources
+# Sidebar Resources
 st.sidebar.title("📂 Project Resources")
 
 try:
     with open("my_report.pdf", "rb") as f:
         st.sidebar.download_button("📄 Download Report", f, file_name="my_report.pdf")
 except:
-    st.sidebar.warning("⚠️ PDF not found")
+    st.sidebar.warning("⚠️ Report not found")
 
 try:
     with open("my_data.csv", "rb") as f:
-        st.sidebar.download_button("🧾 Download Dataset", f, file_name="my_data.csv")
+        st.sidebar.download_button("📊 Download Dataset", f, file_name="my_data.csv")
 except:
-    st.sidebar.warning("⚠️ Dataset not found")
+    st.sidebar.warning("⚠️ Dataset missing")
 
 try:
     with open("my_code.ipynb", "rb") as f:
         st.sidebar.download_button("🐍 Download Code", f, file_name="my_code.ipynb")
 except:
-    st.sidebar.warning("⚠️ Code file not found")
+    st.sidebar.warning("⚠️ Code file missing")
 
 st.sidebar.markdown("🔗 [📦 View Dataset on Kaggle](https://www.kaggle.com/datasets/anirudhchauhan/retail-store-inventory-forecasting-dataset/data)")
