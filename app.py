@@ -38,7 +38,7 @@ with col1:
     """, unsafe_allow_html=True)
 
 with col2:
-    st.subheader("💬 Ask Questions from the PDF Report")
+    st.subheader("💬 Ask Questions")
     if pdf_text:
         question = st.text_input("Ask your question:")
         if question:
