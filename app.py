@@ -3,26 +3,28 @@ import fitz  # PyMuPDF
 import google.generativeai as genai
 import os
 
-# ---------------------- CONFIGURE GEMINI ----------------------
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+# Set up Gemini API key
+api_key = st.secrets["GEMINI_API_KEY"] if "GEMINI_API_KEY" in st.secrets else os.getenv("GEMINI_API_KEY")
 
-model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
+if not api_key:
+    st.error("❌ Gemini API key not found. Add it in Streamlit secrets or .env file.")
+    st.stop()
 
-# ---------------------- LOAD PDF TEXT ----------------------
+genai.configure(api_key=api_key)
+model = genai.GenerativeModel("models/gemini-2.0-flash")
+
+# Load the PDF content
 def load_pdf_text(pdf_path):
-    text = ""
     try:
         doc = fitz.open(pdf_path)
-        for page in doc:
-            text += page.get_text()
-        return text
+        return "\n".join(page.get_text() for page in doc)
     except Exception as e:
         st.error(f"❌ Failed to load PDF: {e}")
         return None
 
 pdf_text = load_pdf_text("my_report.pdf")
 
-# ---------------------- UI SETUP ----------------------
+# UI setup
 st.set_page_config(layout="wide")
 st.title("📊 AI-Driven Stockout Risk Optimization Chatbot")
 
@@ -38,17 +40,17 @@ with col1:
 with col2:
     st.subheader("💬 Ask Questions from the PDF Report")
     if pdf_text:
-        user_question = st.text_input("Ask your question:")
-        if user_question:
+        question = st.text_input("Ask your question:")
+        if question:
             try:
-                response = model.generate_content(f"Answer based on this report:\n{pdf_text}\n\nQuestion: {user_question}")
+                response = model.generate_content(f"Answer the question based on the report:\n\n{pdf_text}\n\nQuestion: {question}")
                 st.success(response.text)
             except Exception as e:
                 st.error(f"⚠️ Gemini Error: {e}")
     else:
-        st.warning("⚠️ PDF not loaded.")
+        st.warning("PDF content not available.")
 
-# ---------------------- SIDEBAR ----------------------
+# Sidebar Downloads
 st.sidebar.title("📂 Project Resources")
 
 try:
