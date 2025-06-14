@@ -5,3 +5,7 @@ langchain-openai
 langchain-community
 pypdf
 python-dotenv
+streamlit
+transformers
+huggingface_hub
+PyMuPDF
