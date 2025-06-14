@@ -1,7 +1,3 @@
 streamlit
+transformers
 PyMuPDF
-google-generativeai
-python-dotenv
-
-
-
