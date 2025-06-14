@@ -38,9 +38,9 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("📈 Interactive Tableau Dashboard")
     st.markdown("""
-        <iframe src="https://public.tableau.com/views/AI-DrivenStockoutRiskPredictionforSmarterInventoryManagement/AI-drivenstockoutriskoptimizationforsmarterinventorymanagement?:language=en-US&:display_count=n&:origin=viz_share_link"
-        width="100%" height="600" style="border:none;"></iframe>
-    """, unsafe_allow_html=True)
+<iframe src="https://public.tableau.com/views/AI-DrivenStockoutRiskPredictionforSmarterInventoryManagement/AI-drivenstockoutriskoptimizationforsmarterinventorymanagement?:language=en-US&:display_count=n&:origin=viz_share_link"
+width="100%" height="600" style="border:none;"></iframe>
+""", unsafe_allow_html=True)
 
 # RIGHT: Chatbot Q&A
 with col2:
