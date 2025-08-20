@@ -36,4 +36,38 @@ Check out the main repository here:
 ### Prerequisites
 
 - All packages in `requirements.txt` (install with `pip install -r requirements.txt`)
+ 
+---
+
+## 💡 How It Works
+
+- The chatbot uses NLP and AI techniques to answer retail inventory questions based on provided data, models, or mock examples.
+- You can extend the logic with custom intents and connect to external inventory/analytics APIs for real-world use.
+
+---
+
+## 🎯 Project Context
+
+This chatbot is part of a larger solution to optimize stockout risk prediction in retail, making AI-powered recommendations accessible, even for non-technical stakeholders.
+
+---
+
+## 🙌 Contributors
+
+- Cheran K  
+- Het Patel  
+- Medlynn M  
+- Nishant B M  
+- Siddesh S Menon
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+*Empowering retailers with conversational AI for smarter inventory decisions.*
+
 
