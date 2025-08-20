@@ -52,15 +52,6 @@ This chatbot is part of a larger solution to optimize stockout risk prediction i
 
 ---
 
-## 🙌 Contributors
-
-- Cheran K  
-- Het Patel  
-- Medlynn M  
-- Nishant B M  
-- Siddesh S Menon
-
----
 
 ## 📄 License
 
