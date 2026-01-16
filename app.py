@@ -11,7 +11,7 @@ if not api_key:
     st.stop()
 
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel("models/gemini-2.0-flash")
+model = genai.GenerativeModel("models/gemini-2.0-flash-lite")
 
 # Load the PDF content
 def load_pdf_text(pdf_path):
@@ -72,3 +72,4 @@ except:
     st.sidebar.warning("⚠️ Code file not found")
 
 st.sidebar.markdown("🔗 [📦 View Dataset on Kaggle](https://www.kaggle.com/datasets/anirudhchauhan/retail-store-inventory-forecasting-dataset/data)")
+
